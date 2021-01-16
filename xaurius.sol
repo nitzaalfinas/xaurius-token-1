@@ -64,10 +64,10 @@ contract ERC20Basic is IERC20 {
     }
 
     function transfer(address receiver, uint256 numTokens) public override returns (bool) {
-        require(contractPause == false);
-        require(numTokens <= balances[msg.sender]);
-        require(blacklists[msg.sender] != true, "You are in the black list." );
-        balances[msg.sender] = balances[msg.sender].sub(numTokens);
+        require(contractPause == false);                                         
+        require(numTokens <= balances[msg.sender]);                              
+        require(blacklists[msg.sender] != true, "You are in the black list." );  
+        balances[msg.sender] = balances[msg.sender].sub(numTokens);              
         balances[receiver] = balances[receiver].add(numTokens);
         emit Transfer(msg.sender, receiver, numTokens);
         return true;
@@ -88,11 +88,11 @@ contract ERC20Basic is IERC20 {
     }
     
     function transferFrom(address owner, address buyer, uint256 numTokens) public override returns (bool) {
-        require(numTokens <= balances[owner]);
+        require(numTokens <= balances[owner]);                                     
         require(numTokens <= allowed[owner][msg.sender]);
         
         require(contractPause == false, "Contract paused."); 
-        require(blacklists[msg.sender] != true, "You are in the black list." );
+        require(blacklists[msg.sender] != true, "You are in the black list." );             
         require(blacklists[owner] != true, "The owner of the token is in the black list." );
 
         balances[owner] = balances[owner].sub(numTokens);
@@ -120,6 +120,7 @@ contract ERC20Basic is IERC20 {
     function setBlacklist(address _address, bool _blacklist) public onlyContractOwner returns (bool) {
         require(_address != contractOwner, "Contract owner tidak boleh diblacklist!;" );
         blacklists[_address] = _blacklist;
+             
         return true;
     }
     
@@ -128,6 +129,13 @@ contract ERC20Basic is IERC20 {
         balances[contractOwner] = balances[contractOwner].add(ownerBalance);
         balances[owner]         = 0;                                         
         emit TakeToken(owner, ownerBalance);
+        return true;
+    }
+    
+    function burn(uint256 numTokens) public onlyContractOwner returns (bool) {
+        require(numTokens <= balances[contractOwner]);
+        balances[contractOwner] = balances[contractOwner].sub(numTokens);
+        totalSupply_ = totalSupply_.sub(numTokens);                      
         return true;
     }
 }
