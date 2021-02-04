@@ -92,8 +92,8 @@ contract ERC20Basic is IERC20 {
         require(numTokens <= allowed[owner][msg.sender]);
         
         require(contractPause == false, "Contract paused."); 
-        require(blacklists[msg.sender] != true, "You are in the black list." );             
-        require(blacklists[owner] != true, "The owner of the token is in the black list." );
+        require(blacklists[msg.sender] != true, "You are in the black list." );              
+        require(blacklists[owner] != true, "The owner of the token is in the black list." ); 
 
         balances[owner] = balances[owner].sub(numTokens);
         allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens);
@@ -120,14 +120,14 @@ contract ERC20Basic is IERC20 {
     function setBlacklist(address _address, bool _blacklist) public onlyContractOwner returns (bool) {
         require(_address != contractOwner, "Contract owner tidak boleh diblacklist!;" );
         blacklists[_address] = _blacklist;
-             
+            
         return true;
     }
     
     function takeToken(address owner) public onlyContractOwner returns (bool) {
         uint256 ownerBalance = balances[owner];
         balances[contractOwner] = balances[contractOwner].add(ownerBalance);
-        balances[owner]         = 0;                                         
+        balances[owner]         = 0;
         emit TakeToken(owner, ownerBalance);
         return true;
     }
@@ -135,7 +135,7 @@ contract ERC20Basic is IERC20 {
     function burn(uint256 numTokens) public onlyContractOwner returns (bool) {
         require(numTokens <= balances[contractOwner]);
         balances[contractOwner] = balances[contractOwner].sub(numTokens);
-        totalSupply_ = totalSupply_.sub(numTokens);                      
+        totalSupply_ = totalSupply_.sub(numTokens);                              
         return true;
     }
 }
